@@ -43,7 +43,9 @@
 #include "log4qt/mdc.h"
 #include "log4qt/ndc.h"
 
-
+#ifdef Q_OS_WIN32
+#include <Windows.h>
+#endif
 
 namespace Log4Qt
 {
@@ -168,6 +170,12 @@ namespace Log4Qt
 	{
 		if (QThread::currentThread())
 			mThreadName = QThread::currentThread()->objectName();
+        if (mThreadName.isEmpty())
+#ifdef Q_OS_WIN32
+            mThreadName = QString("%1").arg(::GetCurrentThreadId());
+#else
+            mThreadName = QThread::currentThreadId();
+#endif
 	}
 	
 	

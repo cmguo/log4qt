@@ -257,7 +257,7 @@ namespace Log4Qt
             value = OptionConverter::toQInt64(rValue, &ok);
         else if (type == QLatin1String("Log4Qt::Level"))
             value = QVariant::fromValue(OptionConverter::toLevel(rValue, &ok));
-        else if (type == QLatin1String("QString"))
+        else if (QVariant(rValue).canConvert(meta_property.type()))
             value = rValue;
         else
         {

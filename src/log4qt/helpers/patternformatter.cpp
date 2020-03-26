@@ -37,6 +37,7 @@
 
 #include <QtCore/QString>
 #include <QtCore/QDebug>
+#include <QCoreApplication>
 #include <limits.h>
 #include "log4qt/helpers/datetime.h"
 #include "log4qt/helpers/logerror.h"
@@ -484,12 +485,17 @@ namespace Log4Qt
 	            		literal += c;
 	            		state = LITERAL_STATE;
 	            	}
-	            	else if (ch == 'n') 
-	            	{
-	            		literal += Layout::endOfLine();
-	            		state = LITERAL_STATE;
-	            	}
-	            	else 
+                    else if (ch == 'n')
+                    {
+                        literal += Layout::endOfLine();
+                        state = LITERAL_STATE;
+                    }
+                    else if (ch == 'i')
+                    {
+                        literal += QString("%1").arg(QCoreApplication::applicationPid());
+                        state = LITERAL_STATE;
+                    }
+                    else
 	            	{
 		            	if (!literal.isEmpty())
 		            	{
