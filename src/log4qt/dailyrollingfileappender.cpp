@@ -38,6 +38,8 @@
 #include "log4qt/helpers/datetime.h"
 #include "log4qt/layout.h"
 #include "log4qt/loggingevent.h"
+#include <QFileInfo>
+#include <QDir>
 
 
 
@@ -123,8 +125,15 @@ namespace Log4Qt
 	    computeFrequency();
 	    if (!mActiveDatePattern.isEmpty())
 	    {
-	        computeRollOverTime();
+            QDateTime start;
+            computeRollOverTime(start);
 	        FileAppender::activateOptions();
+            QFileInfo fi(FileAppender::file());
+            if (fi.lastModified() < start) {
+                mRollOverSuffix = static_cast<DateTime>(fi.lastModified())
+                        .toString(mActiveDatePattern);
+                rollOver();
+            }
 	    }
 	}
 	
@@ -226,7 +235,7 @@ namespace Log4Qt
 	}
 	
 	
-	void DailyRollingFileAppender::computeRollOverTime()
+    void DailyRollingFileAppender::computeRollOverTime(QDateTime & start)
 	{
 	    // Q_ASSERT_X(, "DailyRollingFileAppender::computeRollOverTime()", "Lock must be held by caller")
 	    Q_ASSERT_X(!mActiveDatePattern.isEmpty(), "DailyRollingFileAppender::computeRollOverTime()", "No active date pattern");
@@ -234,7 +243,6 @@ namespace Log4Qt
 	    QDateTime now = QDateTime::currentDateTime();
 	    QDate now_date = now.date();
 	    QTime now_time = now.time();
-	    QDateTime start;
 	    
 	    switch (mFrequency)
 	    {
@@ -326,13 +334,14 @@ namespace Log4Qt
 	    Q_ASSERT_X(!mActiveDatePattern.isEmpty(), "DailyRollingFileAppender::rollOver()", "No active date pattern");
 	
 	    QString roll_over_suffix = mRollOverSuffix;
-	    computeRollOverTime();
+        QDateTime start;
+        computeRollOverTime(start);
 	    if (roll_over_suffix == mRollOverSuffix)
 	        return;
 	
 	    closeFile();
 	
-	    QString target_file_name = file() + roll_over_suffix;
+        QString target_file_name = QFileInfo(file()).dir().filePath(roll_over_suffix);
 	    QFile f(target_file_name);
 	    if (f.exists() && !removeFile(f))
 	        return;

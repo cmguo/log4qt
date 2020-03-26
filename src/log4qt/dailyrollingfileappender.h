@@ -156,7 +156,7 @@ namespace Log4Qt
 	
 	private:
 	    void computeFrequency();
-	    void computeRollOverTime();
+        void computeRollOverTime(QDateTime & start);
 	    QString frequencyToString() const;
 	    void rollOver();
 	    

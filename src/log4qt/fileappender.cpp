@@ -286,6 +286,8 @@ namespace Log4Qt
                                   const QString &rFileName) const
 	{
         logger()->debug("Renaming file '%1' to '%2'", rFile.fileName(), rFileName);
+        QDir dir(QFileInfo(rFileName).dir());
+        QDir().mkpath(dir.path());
         if (rFile.rename(rFileName))
         	return true;
         
