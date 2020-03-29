@@ -45,6 +45,20 @@
 
 #ifdef Q_OS_WIN32
 #include <Windows.h>
+#else
+#include <sys/syscall.h>
+#include <unistd.h>
+inline pid_t gettid() {
+#if defined(__APPLE__) || defined(__OSX__)
+  pid_t tid = syscall(SYS_thread_selfid);
+#else
+  #ifndef __NR_gettid
+  #define __NR_gettid 224
+  #endif
+  pid_t tid = syscall(__NR_gettid);
+#endif
+  return tid;
+}
 #endif
 
 namespace Log4Qt
@@ -174,7 +188,7 @@ namespace Log4Qt
 #ifdef Q_OS_WIN32
             mThreadName = QString("%1").arg(::GetCurrentThreadId());
 #else
-            mThreadName = QThread::currentThreadId();
+            mThreadName = QString("%1").arg(::gettid());
 #endif
 	}
 	
