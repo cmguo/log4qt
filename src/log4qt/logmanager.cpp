@@ -429,6 +429,9 @@ namespace Log4Qt
             case QtDebugMsg:
                 level = Level::DEBUG_INT;
                 break;
+            case QtInfoMsg:
+                level = Level::INFO_INT;
+                break;
             case QtWarningMsg:
                 level = Level::WARN_INT;
                 break;
