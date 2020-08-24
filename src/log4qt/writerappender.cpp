@@ -168,6 +168,10 @@ namespace Log4Qt
 	    // Q_ASSERT_X(, "WriterAppender::append()", "Lock must be held by caller");
 	    Q_ASSERT_X(layout(), "WriterAppender::append()", "Layout must not be null");
 	
+        // suspend warning at qmetaobjectpublisher.cpp: 191
+        if (rEvent.message().startsWith("Property '"))
+            return;
+
 	    QString message(layout()->format(rEvent));
 	
 	    *mpWriter << message;
