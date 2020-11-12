@@ -18,7 +18,7 @@ void QLogger::init(QString path)
     });
     if (path == nullptr)
         path = QCoreApplication::applicationDirPath() + "/logger.properties";
-    if (!QFileInfo::exists(path))
+    if (!QFileInfo::exists(path) && !path.startsWith(":"))
         path = ":/log4qt/logger.properties";
     Log4Qt::PropertyConfigurator::configure(path);
 }
